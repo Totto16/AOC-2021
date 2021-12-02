@@ -102,7 +102,7 @@ async function runProcess(filePath) {
             output[1].push(stderr);
         });
 
-        programm.on('exit', function (code) {
+        programm.on('close', function (code) {
             resolve({ code, output });
         });
     });
