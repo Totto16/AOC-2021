@@ -1,0 +1,26 @@
+{
+  "name": "aoc-2021.js",
+  "version": "1.0.0",
+  "description": "The Advent of Code solved entirely in Node.JS",
+  "main": "all.js",
+  "scripts": {
+    "all": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Totto16/AOC-2021.git"
+  },
+  "keywords": [
+    "AOC",
+    "js"
+  ],
+  "author": "Totto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Totto16/AOC-2021/issues"
+  },
+  "homepage": "https://github.com/Totto16/AOC-2021#readme",
+  "dependencies": {
+    "terminal-kit": "^2.2.3"
+  }
+}

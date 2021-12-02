@@ -1,4 +1,6 @@
 
+//SOME NASTY BUG IS IN HERE!!! IT Doesn'T WORK
+
 
 
 function solve(input){
@@ -27,7 +29,7 @@ let testResult = 7;
 
 let test = solve(testInput)
 if(test[2] != testResult && test.reduce((a,b)=>a+b,0)!=testInput.length){
-    console.error(`Wrong Solving Mecanism: Got '${test[2]}' but expectet '${testResult}'`)
+    console.error(`Wrong Solving Mechanism: Got '${test[2]}' but expected '${testResult}'`)
     process.exit(69);
 }
 
@@ -36,7 +38,7 @@ let realInput = require("fs").readFileSync("./input.txt").toString().replace("\r
 
 let Answer = solve(realInput);
 if(Answer.reduce((a,b)=>a+b,0)!=realInput.length){
-    console.error(`Wrong Solving Mecanism, Length not matching: ${Answer.reduce((a,b)=>a+b,0)} vs actual Length of ${realInput.length}`)
+    console.error(`Wrong Solving Mechanism, Length not matching: ${Answer.reduce((a,b)=>a+b,0)} vs actual Length of ${realInput.length}`)
     process.exit(69);
 }
 
