@@ -65,7 +65,7 @@ function TestBoth() {
         process.exit(69);
     }
 
-    let test2 = solve2(testInput2);
+    let test2 = solve2(testInput);
     if (test2 != testResult2) {
         console.error(`Wrong Solving Mechanism on Test 2: Got '${test2}' but expected '${testResult2}'`);
         process.exit(69);
@@ -73,12 +73,13 @@ function TestBoth() {
 }
 
 async function main() {
+    TestBoth();
+
     let realInput = getFile('./input.txt');
     let Answer = solve(realInput);
     console.log(`Part 1: '${Answer}'`);
 
-    let realInput2 = getFile('./input2.txt');
-    let Answer2 = solve2(realInput2);
+    let Answer2 = solve2(realInput);
     console.log(`Part 2: '${Answer2}'`);
 }
 

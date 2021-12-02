@@ -31,7 +31,7 @@ async function main() {
             }
         }
     });
-    term.yellow('Loading Available Solutions...\n');
+    term.white('Loading Available Solutions...\n');
     const AllNumbers = [];
     for (const filePath of walkSync(__dirname, true, /Day (\d{2})/i, /.*\.js$/i)) {
         const Group = filePath.match(/Day (\d{2})/i);
@@ -69,6 +69,7 @@ async function runThat(index, AllNumbers) {
                 term.cyan(`Got Results:\n${output[0].join('\n')}`);
             } else {
                 term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
+                term.yellow(`${output[2].join('\n')}`)
             }
         }
     } else {
@@ -80,6 +81,7 @@ async function runThat(index, AllNumbers) {
             term.cyan(`Got Results:\n${output[0].join('\n')}`);
         } else {
             term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
+            term.yellow(`${output[2].join('\n')}`)
         }
     }
 }
