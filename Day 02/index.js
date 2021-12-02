@@ -1,38 +1,85 @@
+function getFile(filePath, seperator = '\n') {
+    let result = require('fs')
+        .readFileSync(filePath)
+        .toString()
+        .split(seperator)
+        .filter((a) => a != '');
+    if (result.includes('\r')) {
+        result = result.replaceAll(/\r/, '');
+    }
+    return result;
+}
 
-
-
-function solve(input){
-    let result = [0,0];
-    for(let i = 0; i < input.length ; i++){
+function solve(input) {
+    // pos, depth
+    let result = [0, 0];
+    for (let i = 0; i < input.length; i++) {
         let current = input[i];
-        if(current.includes("forward")){
-            let number = parseInt (current.replace(/forward /i,""))
-            result[0] +=number;
-        }else if(current.includes("down")){
-            let number = parseInt(current.replace(/down /i,""))
+        if (current.includes('forward')) {
+            let number = parseInt(current.replace(/forward /i, ''));
+            result[0] += number;
+        } else if (current.includes('down')) {
+            let number = parseInt(current.replace(/down /i, ''));
             result[1] += number;
-        }else if(current.includes("up")){
-            let number = parseInt(current.replace(/up /i,""))
+        } else if (current.includes('up')) {
+            let number = parseInt(current.replace(/up /i, ''));
             result[1] -= number;
-        }else{
-            console.warn("Not recognized: %s", current)
+        } else {
+            console.warn('Not recognized: %s', current);
         }
     }
-        return result.reduce((a,b)=>a*b,1);
+    return result.reduce((a, b) => a * b, 1);
+}
+
+function solve2(input2) {
+    // pos, depth, aim
+    let result = [0, 0, 0];
+    for (let i = 0; i < input2.length; i++) {
+        let current = input2[i];
+        if (current.includes('forward')) {
+            let number = parseInt(current.replace(/forward /i, ''));
+            result[0] += number;
+            result[1] += result[2] * number;
+        } else if (current.includes('down')) {
+            let number = parseInt(current.replace(/down /i, ''));
+            result[2] += number;
+        } else if (current.includes('up')) {
+            let number = parseInt(current.replace(/up /i, ''));
+            result[2] -= number;
+        } else {
+            console.warn('Not recognized: %s', current);
+        }
     }
-    
-    let testInput = "forward 5|down 5|forward 8|up 3|down 8|forward 2".split("|"); 
-    
+    return result[0] * result[1];
+}
+
+function TestBoth() {
+    let testInput = getFile('./sample.txt');
+
     let testResult = 150;
-    
-    let test = solve(testInput)
-    if(test != testResult){
-        console.error(`Wrong Solving Mechanism: Got '${test}' but expected '${testResult}'`)
+    let testResult2 = 900;
+
+    let test = solve(testInput);
+    if (test != testResult) {
+        console.error(`Wrong Solving Mechanism on Test 1: Got '${test}' but expected '${testResult}'`);
         process.exit(69);
     }
-    
-    
-    let realInput = require("fs").readFileSync("./input.txt").toString().replace("\r","").split("\n").filter(a=>a!=="")
-    
+
+    let test2 = solve2(testInput2);
+    if (test2 != testResult2) {
+        console.error(`Wrong Solving Mechanism on Test 2: Got '${test2}' but expected '${testResult2}'`);
+        process.exit(69);
+    }
+}
+
+async function main() {
+    let realInput = getFile('./input.txt');
     let Answer = solve(realInput);
-    console.log(`Answer\n${Answer}`);
+    console.log(`Part 1: '${Answer}'`);
+
+    let realInput2 = getFile('./input2.txt');
+    let Answer2 = solve2(realInput2);
+    console.log(`Part 2: '${Answer2}'`);
+}
+
+main();

@@ -4,7 +4,8 @@
   "description": "The Advent of Code solved entirely in Node.JS",
   "main": "all.js",
   "scripts": {
-    "all": "node ."
+    "test":"npm run prettier && node . --all",
+    "prettier": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/Totto16/AOC-2021#readme",
   "dependencies": {
+    "prettier": "^2.5.0",
     "terminal-kit": "^2.2.3"
   }
 }
