@@ -16,8 +16,7 @@ or to select only one specific Day run
  npm run start
  ```
 
-# Table Stars
-<!--- advent_readme_stars table --->
+
 ## 2021 Results
 
 | Day | Part 1 | Part 2 |
