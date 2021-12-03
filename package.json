@@ -5,7 +5,9 @@
   "main": "all.js",
   "scripts": {
     "test":"npm run prettier && node . --all",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "all":"node . --all",
+    "start":"node ."
   },
   "repository": {
     "type": "git",

@@ -69,7 +69,7 @@ async function runThat(index, AllNumbers) {
                 term.cyan(`Got Results:\n${output[0].join('\n')}`);
             } else {
                 term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
-                term.yellow(`${output[2].join('\n')}`)
+                term.yellow(`${output[2].join('\n')}`);
             }
         }
     } else {
@@ -81,7 +81,7 @@ async function runThat(index, AllNumbers) {
             term.cyan(`Got Results:\n${output[0].join('\n')}`);
         } else {
             term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
-            term.yellow(`${output[2].join('\n')}`)
+            term.yellow(`${output[2].join('\n')}`);
         }
     }
 }

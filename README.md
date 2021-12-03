@@ -1,3 +1,3 @@
-https://github.com/DestyNova/advent_of_code_2021
+To run it run ```npm run all``` or to select only one run ```npm run start```
 
-https://github.com/Bogdanp/awesome-advent-of-code
+https://github.com/caderek/aocrunner

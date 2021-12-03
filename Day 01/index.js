@@ -12,17 +12,17 @@ function getFile(filePath, seperator = '\n') {
 
 function solve(input) {
     let result = 0;
-    let previous  = -1;
+    let previous = -1;
     for (let i = 0; i < input.length; i++) {
-        let current = parseInt( input[i]);
-        if(isNaN(current)){
-            console.error('Not a Number: ', input[i])
+        let current = parseInt(input[i]);
+        if (isNaN(current)) {
+            console.error('Not a Number: ', input[i]);
         }
-        if(previous<=-1){
+        if (previous <= -1) {
             previous = current;
             continue;
         }
-        if(current>previous){
+        if (current > previous) {
             result++;
         }
         previous = current;
@@ -33,15 +33,15 @@ function solve(input) {
 
 function solve2(input) {
     let result = 0;
-    for (let i = 0; i < input.length-3; i++) {
-        let a = parseInt( input[i]);
-        let b = parseInt( input[i+1]);
-        let c = parseInt( input[i+2]);
-        let d = parseInt( input[i+3]);
-        if(isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)){
-            console.error('Not a Number: ', input[i], input[i+1], input[i+2], input[i+3]);
+    for (let i = 0; i < input.length - 3; i++) {
+        let a = parseInt(input[i]);
+        let b = parseInt(input[i + 1]);
+        let c = parseInt(input[i + 2]);
+        let d = parseInt(input[i + 3]);
+        if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
+            console.error('Not a Number: ', input[i], input[i + 1], input[i + 2], input[i + 3]);
         }
-        if(b+c+d>a+b+c){
+        if (b + c + d > a + b + c) {
             result++;
         }
     }
