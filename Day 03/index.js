@@ -15,86 +15,87 @@ function solve(input) {
     let epsilon = [];
     for (let i = 0; i < input[0].length; i++) {
         // 0 , 1
-        let occurences = [0,0];
+        let occurences = [0, 0];
         for (let j = 0; j < input.length; j++) {
             let char = input[j].charAt(i);
-            if(char === "0"){
+            if (char === '0') {
                 occurences[0]++;
-            }else if(char === "1"){
+            } else if (char === '1') {
                 occurences[1]++;
-            }else{
+            } else {
                 console.warn('Not recognized:', char);
             }
         }
-        gamma.push(occurences[0] > occurences[1]? "0" : "1")
-        epsilon.push(occurences[1] > occurences[0]? "0" : "1")
+        gamma.push(occurences[0] > occurences[1] ? '0' : '1');
+        epsilon.push(occurences[1] > occurences[0] ? '0' : '1');
     }
-    return parseInt(gamma.join(""),2) * parseInt(epsilon.join(""),2);
+    return parseInt(gamma.join(''), 2) * parseInt(epsilon.join(''), 2);
 }
 
 function solve2(input) {
     let oxy = [];
     let co2 = [];
 
-    let oxy_filter = input.map(a=>1);
-    let co2_filter = input.map(a=>1);
+    let oxy_filter = input.map((a) => 1);
+    let co2_filter = input.map((a) => 1);
 
     for (let i = 0; i < input[0].length; i++) {
         // oxy -> 0 , 1  , co2  -> 0,1
-        let occurences = [[0,0],[0,0]];
+        let occurences = [
+            [0, 0],
+            [0, 0],
+        ];
         for (let j = 0; j < input.length; j++) {
             let char = input[j].charAt(i);
-            if(char === "0"){
-                if(oxy_filter[j] === 1){
+            if (char === '0') {
+                if (oxy_filter[j] === 1) {
                     occurences[0][0]++;
                 }
-                if(co2_filter[j] === 1){
+                if (co2_filter[j] === 1) {
                     occurences[1][0]++;
                 }
-            }else if(char === "1"){
-                if(oxy_filter[j] === 1){
+            } else if (char === '1') {
+                if (oxy_filter[j] === 1) {
                     occurences[0][1]++;
                 }
-                if(co2_filter[j] === 1){
+                if (co2_filter[j] === 1) {
                     occurences[1][1]++;
                 }
-            }else{
+            } else {
                 console.warn('Not recognized:', char);
             }
         }
-        let oxy_criteria = (occurences[0][0] > occurences[0][1]? "0" : "1")
-        let co2_criteria = (occurences[1][1] < occurences[1][0]? "1" : "0")
+        let oxy_criteria = occurences[0][0] > occurences[0][1] ? '0' : '1';
+        let co2_criteria = occurences[1][1] < occurences[1][0] ? '1' : '0';
 
         //console.log(oxy_criteria, co2_criteria, i);
 
         for (let j = 0; j < input.length; j++) {
             let char = input[j].charAt(i);
-            if(oxy_filter[j] === 1 && char !== oxy_criteria){
+            if (oxy_filter[j] === 1 && char !== oxy_criteria) {
                 oxy_filter[j] = 0;
             }
 
-            if(co2_filter[j] === 1 && char !== co2_criteria){
+            if (co2_filter[j] === 1 && char !== co2_criteria) {
                 co2_filter[j] = 0;
             }
 
-            let rest_oxy = input.filter((a,index)=>oxy_filter[index]===1);
-            let rest_co2 = input.filter((a,index)=>co2_filter[index]===1);
+            let rest_oxy = input.filter((a, index) => oxy_filter[index] === 1);
+            let rest_co2 = input.filter((a, index) => co2_filter[index] === 1);
 
-            if(rest_oxy.length == 1){
+            if (rest_oxy.length == 1) {
                 oxy.push(rest_oxy[0]);
-                oxy_filter = oxy_filter.map(a=>0);
+                oxy_filter = oxy_filter.map((a) => 0);
                 //console.log(oxy);
             }
-            if(rest_co2.length == 1){
+            if (rest_co2.length == 1) {
                 co2.push(rest_co2[0]);
-                co2_filter = co2_filter.map(a=>0);
-               // console.log(co2);
+                co2_filter = co2_filter.map((a) => 0);
+                // console.log(co2);
             }
         }
-        
-
     }
-    return parseInt(oxy[0],2) * parseInt(co2[0],2);
+    return parseInt(oxy[0], 2) * parseInt(co2[0], 2);
 }
 
 function TestBoth() {

@@ -5,3 +5,4 @@ package-lock.json
 *.md
 .vscode
 node_modules
+.github
