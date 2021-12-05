@@ -31,7 +31,7 @@ async function main() {
             }
         }
     });
-    term.white('Loading Available Solutions...\n');
+    term.magenta('Loading Available Solutions...\n');
     const AllNumbers = [];
     for (const filePath of walkSync(__dirname, true, /Day (\d{2})/i, /.*\.js$/i)) {
         const Group = filePath.match(/Day (\d{2})/i);
