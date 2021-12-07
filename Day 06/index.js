@@ -56,6 +56,7 @@ function TestBoth() {
     let test = solve(testInput);
     if (test != testResult) {
         console.error(`Wrong Solving Mechanism on Test 1: Got '${test}' but expected '${testResult}'`);
+        process.exit(69);
     }
 
     let test2 = solve2(testInput);
