@@ -112,7 +112,7 @@ async function runProcess(filePath) {
         const programm = exec(`node "${filePath}"`, { cwd: path.dirname(filePath) }, function (error, stdout, stderr) {
             if (error) {
                 output[2].push(error);
-                reject({ code: 69, output, time: performance.now() - start });
+                resolve({ code: 69, output, time: performance.now() - start });
             }
             output[0].push(stdout);
             output[1].push(stderr);
