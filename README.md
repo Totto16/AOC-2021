@@ -28,4 +28,5 @@ or to select only one specific Day run
 | [Day 5](https://adventofcode.com/2021/day/5) | ⭐ | ⭐ |
 | [Day 6](https://adventofcode.com/2021/day/6) | ⭐ | ⭐ |
 | [Day 7](https://adventofcode.com/2021/day/7) | ⭐ | ⭐ |
+| [Day 8](https://adventofcode.com/2021/day/8) | ⭐ | ⭐ |
 <!--- advent_readme_stars table --->
