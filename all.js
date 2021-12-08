@@ -34,7 +34,7 @@ async function main() {
     });
     term.magenta('Loading Available Solutions...\n');
     const AllNumbers = [];
-    for (const filePath of walkSync(__dirname, true, /Day (\d{2})/i, /.*\.js$/i)) {
+    for (const filePath of walkSync(__dirname, true, /Day (\d{2})/i, /index\.js$/i)) {
         const Group = filePath.match(/Day (\d{2})/i);
         if (!Group) {
             continue;
