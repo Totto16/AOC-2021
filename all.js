@@ -79,7 +79,7 @@ async function runThat(index, AllNumbers) {
         term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
         const { code, output, time } = await runProcess(selected.filePath);
         if (code == 0) {
-            term.cyan(`Got Results - \n${output[0].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
+            term.cyan(`Got Results:\n${output[0].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
         } else {
             term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
             term.yellow(`${output[2].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
