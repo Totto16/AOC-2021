@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const term = require('terminal-kit').terminal;
-const { exec } = require('child_process');
+const { spawn, ChildProcess } = require('child_process');
 const { performance } = require('perf_hooks');
 
 function* walkSync(dir, relative, FolderMatch, fileMatch) {
@@ -67,10 +67,10 @@ async function runThat(index, AllNumbers) {
             term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
             const { code, output, time } = await runProcess(selected.filePath);
             if (code == 0) {
-                term.cyan(`Got Results:\n${output[0].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
+                term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
             } else {
-                term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
-                term.yellow(`${output[2].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
+                term.red(`Got Error with code ${code}:\n${output[1].join('')}`);
+                term.yellow(`${output[2].join('')}^yIt took ^g${formatTime(time)}\n\n`);
             }
         }
     } else {
@@ -79,10 +79,10 @@ async function runThat(index, AllNumbers) {
         term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
         const { code, output, time } = await runProcess(selected.filePath);
         if (code == 0) {
-            term.cyan(`Got Results:\n${output[0].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
+            term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
         } else {
             term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
-            term.yellow(`${output[2].join('\n')}^yIt took ^g${formatTime(time)}\n\n`);
+            term.yellow(`${output[2].join('')}^yIt took ^g${formatTime(time)}\n\n`);
         }
     }
 }
@@ -108,14 +108,46 @@ async function sleep(time) {
 async function runProcess(filePath) {
     const start = performance.now();
     return await new Promise((resolve, reject) => {
-        const output = [[], [], []];
-        const programm = exec(`node "${filePath}"`, { cwd: path.dirname(filePath) }, function (error, stdout, stderr) {
-            if (error) {
-                output[2].push(error);
-                resolve({ code: 69, output, time: performance.now() - start });
+        const output = [[], [], []]; // stdout, stderr, error
+        const programm = spawn('node', [filePath], {
+            cwd: path.dirname(filePath),
+            stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+        });
+
+        programm.on('error', function (error) {
+            output[2].push(error);
+            resolve({ code: 69, output, time: performance.now() - start });
+        });
+
+        programm.stdout.on('data', function (data) {
+            output[0].push(data.toString());
+        });
+
+        programm.stderr.on('data', function (data) {
+            output[1].push(data.toString());
+        });
+
+        programm.on('message', function (message) {
+            let res;
+            try {
+                res = JSON.parse(message);
+            } catch (err) {
+                term.red("Couldn't parse IPC message!\n");
             }
-            output[0].push(stdout);
-            output[1].push(stderr);
+
+            if (res.type === 'error') {
+                term.red(`${res.message}\n`);
+                term.yellow('To interrupt this press c!\n');
+                process.stdin.resume();
+                process.stdin.setEncoding('utf8');
+                process.stdin.on('data', function (data) {
+                    if (data.startsWith('c')) {
+                        programm.kill('SIGINT');
+                        output[2].push('Cancelled by User\n');
+                        resolve({ code: 7, output, time: performance.now() - start });
+                    }
+                });
+            }
         });
 
         programm.on('close', function (code) {

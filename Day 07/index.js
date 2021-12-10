@@ -71,9 +71,17 @@ function TestBoth() {
     }
 }
 
+function slowWarning() {
+    process.on('SIGINT', () => {
+        process.exit(0);
+    });
+    process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
+}
+
 async function main() {
     TestBoth();
 
+    slowWarning();
     let realInput = getFile('./input.txt');
     let Answer = solve(realInput);
     console.log(`Part 1: '${Answer}'`);
