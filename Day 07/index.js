@@ -4,8 +4,8 @@ function getFile(filePath, seperator = '\n') {
         .toString()
         .split(seperator)
         .filter((a) => a != '');
-    if (result.includes('\r')) {
-        result = result.replaceAll(/\r/, '');
+    if (result.some((a) => a.split('').includes('\r'))) {
+        result = result.map((a) => a.replaceAll(/\r/g, ''));
     }
     return result;
 }

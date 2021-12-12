@@ -16,6 +16,17 @@ or to select only one specific Day run
  npm run start
  ```
 
+To run one sopecific day either run
+ ```
+npm run start -- --{day}
+ ```
+
+ or  
+ ```
+node . --{day}
+ ```
+
+
 <!--- advent_readme_stars table --->
 ## 2021 Results
 
