@@ -151,7 +151,21 @@ function TestBoth() {
 }
 
 async function main() {
-    TestBoth();
+    let doTests = true;
+    let autoSkipSlow = false;
+    process.argv.forEach((string) => {
+        if (string.startsWith('--')) {
+            let arg = string.replace('--', '').toLowerCase();
+            if (arg === 'no-tests') {
+                doTests = false;
+            } else if (arg === 'autoskipslow') {
+                autoSkipSlow = true;
+            }
+        }
+    });
+    if (doTests) {
+        TestBoth();
+    }
 
     let realInput = getFile('./input.txt');
     let Answer = solve(realInput);

@@ -29,7 +29,12 @@ async function main() {
                 option = 0;
             } else if (isNumber !== false) {
                 option = isNumber;
+            }else if(arg === 'help' || arg === 'h'){
+                printHelp();
             }
+            //TODO switch + accept some more for skiping tests and for auto skiping slow ones
+        }else if(string.trim() === '?'){
+            printHelp();
         }
     });
     term.magenta('Loading Available Solutions...\n');
@@ -57,6 +62,10 @@ async function main() {
         await runThat(option, AllNumbers);
         process.exit(0);
     }
+}
+
+function  printHelp(){
+    //TODO implement
 }
 
 async function runThat(index, AllNumbers) {
@@ -106,6 +115,7 @@ async function sleep(time) {
 }
 
 async function runProcess(filePath) {
+    //TODO accept arguments and apply them to sub"processes"
     const start = performance.now();
     return await new Promise((resolve, reject) => {
         const output = [[], [], []]; // stdout, stderr, error
