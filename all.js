@@ -20,7 +20,7 @@ function* walkSync(dir, relative, FolderMatch, fileMatch) {
 }
 
 async function main() {
-    let options = { option: 'select', skipSlow: false, no_tests: false };
+    let options = { index: 'select', skipSlow: false, no_tests: false };
     process.argv.forEach((string) => {
         if (string.startsWith('-')) {
             let arg = string.replace('-', '');
@@ -28,7 +28,7 @@ async function main() {
             let isNumber = !isNaN(parseInt(arg2)) ? parseInt(arg2) : false;
             switch (arg) {
                 case '-all':
-                    options.option = 0;
+                    options.index = 0;
                     break;
                 case '-help':
                     printHelp();
@@ -53,7 +53,7 @@ async function main() {
                     break;
                 default:
                     if (isNumber !== false) {
-                        options.option = isNumber;
+                        options.index = isNumber;
                     }
             }
         } else if (string.trim() === '?') {
@@ -70,7 +70,7 @@ async function main() {
         const number = parseInt(Group[1]);
         AllNumbers.push({ number, filePath });
     }
-    if (options.option === 'select') {
+    if (options.index === 'select') {
         term.green('Select an Option:\n');
         const items = ['all: Run all Available Solutions'].concat(
             AllNumbers.map((a) => `${a.number}: Run the Solution of Day ${a.number.toString().padStart(2, '0')}`)
@@ -136,7 +136,7 @@ function printHelp(returnAvailable = false) {
 }
 
 async function runThat(options, AllNumbers) {
-    if (options.option == 0) {
+    if (options.index == 0) {
         term.blue(`Now running ALL Available Solutions:\n`);
         for (let i = 0; i < AllNumbers.length; i++) {
             const selected = AllNumbers[i];
@@ -150,7 +150,11 @@ async function runThat(options, AllNumbers) {
             }
         }
     } else {
-        const selected = AllNumbers[options.option - 1];
+        const selected = AllNumbers[options.index - 1];
+        if(!selected){
+            term.red(`This number is not supported (yet): ${options.index}`);
+            process.exit(1)
+        }
         term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
         const { code, output, time } = await runProcess(selected.filePath, options);
         if (code == 0) {
