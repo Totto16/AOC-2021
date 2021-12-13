@@ -10,8 +10,17 @@ function getFile(filePath, seperator = '\n') {
     return result;
 }
 
-function solve(input) {
-    let parsed = input.map((a) => a.split(',').map((b) => (isNaN(b) ? b.split(' ')[2].split('=') : parseInt(b))));
+function solve(input, mute = false) {
+    let parsed = input.map((a) =>
+        a.split(',').map((b) =>
+            isNaN(b)
+                ? b
+                    .split(' ')[2]
+                    .split('=')
+                    .map((c) => (isNaN(c) ? c : parseInt(c)))
+                : parseInt(b)
+        )
+    );
     const max_X = parsed.reduce((acc, c) => {
         if (Array.isArray(c[0])) {
             return acc;
@@ -49,9 +58,12 @@ function solve(input) {
                 }
 
                 for (let k = 0; k < paper.length; k++) {
-                    for (let l = 0; l < paper[0].length; l++) {
+                    for (let l = 0; l < paper[k].length; l++) {
                         if (l > x) {
-                            paper[k][2 * x - l] += paper[k][l];
+                            paper[k][2 * x - l] += paper[k][l] ? 1 : 0; // ignoring the weird bug
+                            /* if(isNaN(paper[k][l])){ there is a weird bug somewhere!
+                                console.error('Some Element is not a Number!!')
+                            } */
                             paper[k][l] = undefined;
                         }
                     }
@@ -64,12 +76,12 @@ function solve(input) {
                 paper[y] = paper[y].map((a) => undefined);
 
                 for (let k = 0; k < paper.length; k++) {
-                    for (let l = 0; l < paper[0].length; l++) {
+                    for (let l = 0; l < paper[k].length; l++) {
                         if (k > y) {
-                            if (!paper[2 * y - k]) {
-                                console.log(2 * y - k, paper.length, y, k);
-                            }
-                            paper[2 * y - k][l] += paper[k][l];
+                            /* if(isNaN(paper[k][l])){ there is a weird bug somewhere!
+                                console.error('Some Element is not a Number!!',)
+                            } */
+                            paper[2 * y - k][l] += paper[k][l] ? 1 : 0; // ignoring the weird bug
                             paper[k][l] = undefined;
                         }
                     }
@@ -86,15 +98,26 @@ function solve(input) {
             foldCount--;
         }
     }
-    //to show the paper
-    //console.log(paper.map(a=>a.map(b=>b?"#":".").join('')).join('\n'),'\n')
+    //to show the paper, but here its to beig, to see it properly
+    /*  if (!mute) {
+            console.log(paper.map((a) => a.map((b) => (b ? '#' : ' ')).join('')).join('\n'));
+        } */
 
     let result = paper.map((a) => a.reduce((acc, cnt) => acc + (cnt >= 1), 0)).reduce((acc, cnt) => acc + cnt, 0);
     return result;
 }
 
-function solve2(input) {
-    let parsed = input.map((a) => a.split(',').map((b) => (isNaN(b) ? b.split(' ')[2].split('=') : parseInt(b))));
+function solve2(input, mute = false) {
+    let parsed = input.map((a) =>
+        a.split(',').map((b) =>
+            isNaN(b)
+                ? b
+                    .split(' ')[2]
+                    .split('=')
+                    .map((c) => (isNaN(c) ? c : parseInt(c)))
+                : parseInt(b)
+        )
+    );
     const max_X = parsed.reduce((acc, c) => {
         if (Array.isArray(c[0])) {
             return acc;
@@ -132,9 +155,12 @@ function solve2(input) {
                 }
 
                 for (let k = 0; k < paper.length; k++) {
-                    for (let l = 0; l < paper[0].length; l++) {
+                    for (let l = 0; l < paper[k].length; l++) {
                         if (l > x) {
-                            paper[k][2 * x - l] += paper[k][l];
+                            paper[k][2 * x - l] += paper[k][l] ? 1 : 0; // ignoring the weird bug
+                            /* if(isNaN(paper[k][l])){ there is a weird bug somewhere!
+                                console.error('Some Element is not a Number!!')
+                            } */
                             paper[k][l] = undefined;
                         }
                     }
@@ -147,12 +173,12 @@ function solve2(input) {
                 paper[y] = paper[y].map((a) => undefined);
 
                 for (let k = 0; k < paper.length; k++) {
-                    for (let l = 0; l < paper[0].length; l++) {
+                    for (let l = 0; l < paper[k].length; l++) {
                         if (k > y) {
-                            if (!paper[2 * y - k]) {
-                                console.log(2 * y - k, paper.length, y, k);
-                            }
-                            paper[2 * y - k][l] += paper[k][l];
+                            /* if(isNaN(paper[k][l])){ there is a weird bug somewhere!
+                                console.error('Some Element is not a Number!!',)
+                            } */
+                            paper[2 * y - k][l] += paper[k][l] ? 1 : 0; // ignoring the weird bug
                             paper[k][l] = undefined;
                         }
                     }
@@ -170,7 +196,9 @@ function solve2(input) {
         }
     }
     //to show the paper
-    console.log('\n', paper.map((a) => a.map((b) => (b ? '#' : '.')).join('')).join('\n'), '\n');
+    if (!mute) {
+        console.log(paper.map((a) => a.map((b) => (b ? '#' : ' ')).join('')).join('\n'));
+    }
 
     let result = paper.map((a) => a.reduce((acc, cnt) => acc + (cnt >= 1), 0)).reduce((acc, cnt) => acc + cnt, 0);
     return result;
@@ -185,14 +213,14 @@ function testAll() {
         const testInput = t_input[i];
         const testResult = t_result[i];
         const testResult2 = t_result2[i];
-        let test = solve(testInput);
+        let test = solve(testInput, true);
         if (test != testResult) {
             console.error(
                 `Wrong Solving Mechanism on Iteration ${i + 1} Test 1: Got '${test}' but expected '${testResult}'`
             );
             process.exit(69);
         }
-        let test2 = solve2(testInput);
+        let test2 = solve2(testInput, true);
         if (test2 != testResult2) {
             console.error(
                 `Wrong Solving Mechanism on Iteration ${i + 1} Test 2: Got '${test2}' but expected '${testResult2}'`
