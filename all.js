@@ -29,11 +29,11 @@ async function main() {
                 option = 0;
             } else if (isNumber !== false) {
                 option = isNumber;
-            }else if(arg === 'help' || arg === 'h'){
+            } else if (arg === 'help' || arg === 'h') {
                 printHelp();
             }
             //TODO switch + accept some more for skiping tests and for auto skiping slow ones
-        }else if(string.trim() === '?'){
+        } else if (string.trim() === '?') {
             printHelp();
         }
     });
@@ -64,7 +64,7 @@ async function main() {
     }
 }
 
-function  printHelp(){
+function printHelp() {
     //TODO implement
 }
 
