@@ -78,7 +78,7 @@ async function main() {
         term.singleColumnMenu(items, {}, async function (error, response) {
             term.previousLine(AllNumbers.length + 1);
             term.eraseDisplayBelow();
-            await runThat({ ...options, option: response.selectedIndex }, AllNumbers);
+            await runThat({ ...options, index: response.selectedIndex }, AllNumbers);
             process.exit(0);
         });
     } else {
