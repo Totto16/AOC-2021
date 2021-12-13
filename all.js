@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const term = require('terminal-kit').terminal;
-const { spawn, ChildProcess } = require('child_process');
+const { spawn } = require('child_process');
 const { performance } = require('perf_hooks');
 
 function* walkSync(dir, relative, FolderMatch, fileMatch) {
@@ -20,19 +20,42 @@ function* walkSync(dir, relative, FolderMatch, fileMatch) {
 }
 
 async function main() {
-    let option = 'select';
+    let options = { option: 'select', skipSlow: false, no_tests: false };
     process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '');
-            let isNumber = !isNaN(parseInt(arg)) ? parseInt(arg) : false;
-            if (arg === 'all') {
-                option = 0;
-            } else if (isNumber !== false) {
-                option = isNumber;
-            } else if (arg === 'help' || arg === 'h') {
-                printHelp();
+        if (string.startsWith('-')) {
+            let arg = string.replace('-', '');
+            let arg2 = string.replace('--', '');
+            let isNumber = !isNaN(parseInt(arg2)) ? parseInt(arg2) : false;
+            switch (arg) {
+                case '-all':
+                    options.option = 0;
+                    break;
+                case '-help':
+                    printHelp();
+                    break;
+                case 'h':
+                    printHelp();
+                    break;
+                case '?':
+                    printHelp();
+                    break;
+                case '-no-tests':
+                    options.no_tests = true;
+                    break;
+                case 't':
+                    options.no_tests = true;
+                    break;
+                case '-autoskipslow':
+                    options.skipSlow = true;
+                    break;
+                case 's':
+                    options.skipSlow = true;
+                    break;
+                default:
+                    if (isNumber !== false) {
+                        options.option = isNumber;
+                    }
             }
-            //TODO switch + accept some more for skiping tests and for auto skiping slow ones
         } else if (string.trim() === '?') {
             printHelp();
         }
@@ -47,7 +70,7 @@ async function main() {
         const number = parseInt(Group[1]);
         AllNumbers.push({ number, filePath });
     }
-    if (option === 'select') {
+    if (options.option === 'select') {
         term.green('Select an Option:\n');
         const items = ['all: Run all Available Solutions'].concat(
             AllNumbers.map((a) => `${a.number}: Run the Solution of Day ${a.number.toString().padStart(2, '0')}`)
@@ -55,26 +78,70 @@ async function main() {
         term.singleColumnMenu(items, {}, async function (error, response) {
             term.previousLine(AllNumbers.length + 1);
             term.eraseDisplayBelow();
-            await runThat(response.selectedIndex, AllNumbers);
+            await runThat({ ...options, option: response.selectedIndex }, AllNumbers);
             process.exit(0);
         });
     } else {
-        await runThat(option, AllNumbers);
+        await runThat(options, AllNumbers);
         process.exit(0);
     }
 }
 
-function printHelp() {
-    //TODO implement
+function printHelp(returnAvailable = false) {
+    const AvailableArgs = [
+        {
+            type: 'normal',
+            args: ['--all'],
+            description: 'Runs all available Solutions',
+        },
+        {
+            type: 'normal',
+            args: ['--help', '-h', '-?'],
+            description: 'Shows this help page',
+        },
+        {
+            type: 'internal',
+            args: ['--no-tests', '-t'],
+            representation: 'no_tests',
+            description: 'Skips the tests, the performance is slightly better',
+        },
+        {
+            type: 'internal',
+            args: ['--autoskipslow', '-s'],
+            representation: 'skipSlow',
+            description: 'Auto skips solutions marked as slow',
+        },
+        {
+            type: 'which',
+            args: ['--{number}'],
+            params: ['{number} is a valid Number from Day 1 - actual Day, maximum 25'],
+            description: 'Runs the Solution for that day',
+        },
+    ];
+
+    if (returnAvailable) {
+        return AvailableArgs;
+    }
+
+    term.blue('HELP Page:\n\n');
+    term.cyan('node . [options]\n\nOptions:\n');
+
+    AvailableArgs.forEach((arg) => {
+        let { args, params, description } = arg;
+        let text = `${args.join(', ')}${params ? ` -> ${params.join(', ')}` : ''} : ${description}`;
+        term.green(`${text}\n`);
+    });
+
+    process.exit(0);
 }
 
-async function runThat(index, AllNumbers) {
-    if (index == 0) {
+async function runThat(options, AllNumbers) {
+    if (options.option == 0) {
         term.blue(`Now running ALL Available Solutions:\n`);
         for (let i = 0; i < AllNumbers.length; i++) {
             const selected = AllNumbers[i];
             term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
-            const { code, output, time } = await runProcess(selected.filePath);
+            const { code, output, time } = await runProcess(selected.filePath, options);
             if (code == 0) {
                 term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
             } else {
@@ -83,10 +150,9 @@ async function runThat(index, AllNumbers) {
             }
         }
     } else {
-        index--;
-        const selected = AllNumbers[index];
+        const selected = AllNumbers[options.option - 1];
         term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
-        const { code, output, time } = await runProcess(selected.filePath);
+        const { code, output, time } = await runProcess(selected.filePath, options);
         if (code == 0) {
             term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
         } else {
@@ -114,12 +180,22 @@ async function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-async function runProcess(filePath) {
-    //TODO accept arguments and apply them to sub"processes"
+function toArgs(options) {
+    const AvailableOptions = printHelp(true).filter((arg) => arg.type == 'internal');
+    let result = [];
+    for (let i = 0; i < AvailableOptions.length; i++) {
+        if (options[AvailableOptions[i].representation]) {
+            result.push(AvailableOptions[i].args[0]);
+        }
+    }
+    return result;
+}
+
+async function runProcess(filePath, options) {
     const start = performance.now();
     return await new Promise((resolve, reject) => {
         const output = [[], [], []]; // stdout, stderr, error
-        const programm = spawn('node', [filePath], {
+        const programm = spawn('node', [filePath, '--', ...toArgs(options)], {
             cwd: path.dirname(filePath),
             stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
         });

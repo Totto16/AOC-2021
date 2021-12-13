@@ -4,10 +4,11 @@
   "description": "The Advent of Code solved entirely in Node.JS",
   "main": "all.js",
   "scripts": {
-    "test":"npm run prettier && node . --all",
+    "test":"npm run prettier && node . --all -s",
     "prettier": "npx prettier --write .",
-    "all":"node . --all",
-    "start":"node ."
+    "all":"node . --all -s -t",
+    "start":"node .",
+    "help":"node . --help"
   },
   "repository": {
     "type": "git",

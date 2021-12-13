@@ -15,9 +15,9 @@ function solve(input, mute = false) {
         a.split(',').map((b) =>
             isNaN(b)
                 ? b
-                    .split(' ')[2]
-                    .split('=')
-                    .map((c) => (isNaN(c) ? c : parseInt(c)))
+                      .split(' ')[2]
+                      .split('=')
+                      .map((c) => (isNaN(c) ? c : parseInt(c)))
                 : parseInt(b)
         )
     );
@@ -112,9 +112,9 @@ function solve2(input, mute = false) {
         a.split(',').map((b) =>
             isNaN(b)
                 ? b
-                    .split(' ')[2]
-                    .split('=')
-                    .map((c) => (isNaN(c) ? c : parseInt(c)))
+                      .split(' ')[2]
+                      .split('=')
+                      .map((c) => (isNaN(c) ? c : parseInt(c)))
                 : parseInt(b)
         )
     );

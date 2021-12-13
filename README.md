@@ -16,14 +16,9 @@ or to select only one specific Day run
  npm run start
  ```
 
-To run one sopecific day either run
+For help run
  ```
-npm run start -- --{day}
- ```
-
- or  
- ```
-node . --{day}
+npm run help
  ```
 
 

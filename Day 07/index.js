@@ -94,7 +94,10 @@ async function main() {
     if (doTests) {
         TestBoth();
     }
-
+    if (autoSkipSlow) {
+        console.log('Auto Skipped Slow');
+        process.exit(0);
+    }
     slowWarning();
     let realInput = getFile('./input.txt');
     let Answer = solve(realInput);
