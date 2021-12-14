@@ -64,7 +64,7 @@ function TestBoth() {
         process.exit(69);
     }
 
-    let test2 = solve2(testInput);
+    let test2 = solve2(testInput, false);
     if (test2 != testResult2) {
         console.error(`Wrong Solving Mechanism on Test 2: Got '${test2}' but expected '${testResult2}'`);
         process.exit(69);
@@ -75,7 +75,9 @@ function slowWarning() {
     process.on('SIGINT', () => {
         process.exit(0);
     });
-    process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
+    if(process.send){
+        process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
+    }
 }
 
 async function main() {
