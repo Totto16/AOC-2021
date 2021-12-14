@@ -75,7 +75,7 @@ function slowWarning() {
     process.on('SIGINT', () => {
         process.exit(0);
     });
-    if(process.send){
+    if (process.send) {
         process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
     }
 }
@@ -96,9 +96,11 @@ async function main() {
     if (doTests) {
         TestBoth();
     }
+
+    // I could definitely improve the algorithm to make it faster, liek I did in many after that, but just for fun I'll let this use the slow Functionality!
     if (autoSkipSlow) {
         console.log('Auto Skipped Slow');
-        process.exit(0);
+        process.exit(43);
     }
     slowWarning();
     let realInput = getFile('./input.txt');

@@ -143,25 +143,36 @@ async function runThat(options, AllNumbers) {
             term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
             const { code, output, time } = await runProcess(selected.filePath, options);
             if (code == 0) {
-                term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
+                term.cyan(`Got Results:\n${output[0].join('')}^yIt took ${formatTime(time)}\n\n`);
             } else {
-                term.red(`Got Error with code ${code}:\n${output[1].join('')}`);
-                term.yellow(`${output[2].join('')}^yIt took ^g${formatTime(time)}\n\n`);
+                switch (code) {
+                    case 43:
+                        term.yellow(`${output[0].join('')}`);
+                        term.yellow(`It took ${formatTime(time)}\n\n`);
+                        break;
+                    case 69:
+                        term.red(`Test failed with: ${code}:\n${output[1].join('')}`);
+                        term.yellow(`${output[2].join('')}^yIt took ${formatTime(time)}\n\n`);
+                        break;
+                    default:
+                        term.red(`Got Error with code ${code}:\n${output[1].join('')}`);
+                        term.yellow(`${output[2].join('')}^yIt took ${formatTime(time)}\n\n`);
+                }
             }
         }
     } else {
         const selected = AllNumbers[options.index - 1];
-        if(!selected){
+        if (!selected) {
             term.red(`This number is not supported (yet): ${options.index}`);
-            process.exit(1)
+            process.exit(1);
         }
         term.green(`Now running Solution for Day ${selected.number.toString().padStart(2, '0')}:\n`);
         const { code, output, time } = await runProcess(selected.filePath, options);
         if (code == 0) {
-            term.cyan(`Got Results:\n${output[0].join('')}^yIt took ^g${formatTime(time)}\n\n`);
+            term.cyan(`Got Results:\n${output[0].join('')}^yIt took ${formatTime(time)}\n\n`);
         } else {
             term.red(`Got Error with code ${code}:\n${output[1].join('\n')}`);
-            term.yellow(`${output[2].join('')}^yIt took ^g${formatTime(time)}\n\n`);
+            term.yellow(`${output[2].join('')}^yIt took ${formatTime(time)}\n\n`);
         }
     }
 }
@@ -169,14 +180,14 @@ async function runThat(options, AllNumbers) {
 function formatTime(input) {
     if (1 > input) {
         let ns = Math.round(input * 1000);
-        return `0.${ns} ms`;
+        return `^g0.${ns} ms`;
     } else if (1000 > input) {
         let ms = Math.round(input);
-        return `${ms} ms`;
+        return `^g${ms} ms`;
     } else if (60 * 1000 > input) {
         let s = Math.floor(input / 1000);
         let ms = Math.round(input % 1000);
-        return `${s}.${ms} s`;
+        return `^r${s}.${ms} s`;
     }
 }
 
