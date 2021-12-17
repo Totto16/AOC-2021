@@ -9,7 +9,7 @@ function getFile(filePath, seperator = '\n') {
     }
     return result;
 }
-let glob_version = 0;
+
 function solve(input, mute = false) {
     if (Array.isArray(input)) {
         input = input[0];
@@ -70,7 +70,6 @@ function parse_BITS(input, isHex = true, amount = -1) {
             break;
         }
         new_packet.version = parseInt(bits.substring(current_index, current_index + 3), 2);
-        glob_version += new_packet.version;
         current_index += 3;
         new_packet.typeID = parseInt(bits.substring(current_index, current_index + 3), 2);
         current_index += 3;
