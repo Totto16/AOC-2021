@@ -193,6 +193,7 @@ function slowWarning() {
         process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
     }
 }
+
 async function main() {
     let doTests = true;
     let autoSkipSlow = false;
