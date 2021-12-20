@@ -57,34 +57,6 @@ function getBeacons(scanners) {
                 second: for (let j = scanners.length - 1; j >= 0; j--) {
                     for (let k = 0, obj = {}; k < 2 * 12; k++) {
                         let rotated = possibleOrientationsOf(scanners[j].beacons, k);
-                        /*       const rotated = scanners[j].beacons.map((beacon) =>
-                        [
-                            ({ x, y, z }) => ({ x, y, z }),
-                            ({ x, y, z }) => ({ x: x, y: -y, z: -z }),
-                            ({ x, y, z }) => ({ x: x, y: z, z: -y }),
-                            ({ x, y, z }) => ({ x: x, y: -z, z: y }),
-                            ({ x, y, z }) => ({ x: -x, y: -y, z: z }),
-                            ({ x, y, z }) => ({ x: -x, y: y, z: -z }),
-                            ({ x, y, z }) => ({ x: -x, y: z, z: y }),
-                            ({ x, y, z }) => ({ x: -x, y: -z, z: -y }),
-                            ({ x, y, z }) => ({ x: y, y: z, z: x }),
-                            ({ x, y, z }) => ({ x: y, y: -z, z: -x }),
-                            ({ x, y, z }) => ({ x: y, y: x, z: -z }),
-                            ({ x, y, z }) => ({ x: y, y: -x, z: z }),
-                            ({ x, y, z }) => ({ x: -y, y: -z, z: x }),
-                            ({ x, y, z }) => ({ x: -y, y: z, z: -x }),
-                            ({ x, y, z }) => ({ x: -y, y: -x, z: -z }),
-                            ({ x, y, z }) => ({ x: -y, y: x, z: z }),
-                            ({ x, y, z }) => ({ x: z, y: x, z: y }),
-                            ({ x, y, z }) => ({ x: z, y: -x, z: -y }),
-                            ({ x, y, z }) => ({ x: z, y: y, z: -x }),
-                            ({ x, y, z }) => ({ x: z, y: -y, z: x }),
-                            ({ x, y, z }) => ({ x: -z, y: -x, z: y }),
-                            ({ x, y, z }) => ({ x: -z, y: x, z: -y }),
-                            ({ x, y, z }) => ({ x: -z, y: y, z: x }),
-                            ({ x, y, z }) => ({ x: -z, y: -y, z: -x }),
-                        ][k](beacon)
-                    ); */
                         for (let l = 0; l < element.actual.length; l++) {
                             for (let m = 0; m < rotated.length; m++) {
                                 let current = [
