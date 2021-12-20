@@ -97,7 +97,7 @@ async function main() {
         TestBoth();
     }
 
-    // I could definitely improve the algorithm to make it faster, liek I did in many after that, but just for fun I'll let this use the slow Functionality!
+    // I could definitely improve the algorithm to make it faster, like I did in many after that, but just for fun I'll let this use the slow Functionality!
     if (autoSkipSlow) {
         console.log('Auto Skipped Slow');
         process.exit(43);

@@ -193,7 +193,6 @@ async function main() {
             }
         }
     });
-
     initPrototype();
     if (doTests) {
         testAll();
