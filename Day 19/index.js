@@ -163,7 +163,7 @@ function slowWarning() {
         process.exit(0);
     });
     if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
+        process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
     }
 }
 
@@ -185,7 +185,7 @@ async function main() {
         testAll();
     }
 
-    // This solution is also to slow, to make this tremendous amount of for loops, you need about ~ 8secs
+    // This solution is also to slow, to make this tremendous amount of for loops, you need about ~ 8secs (i tested it on a slower machine, it took 30 secs)
     if (autoSkipSlow) {
         console.log('Auto Skipped Moderately Slow');
         process.exit(43);

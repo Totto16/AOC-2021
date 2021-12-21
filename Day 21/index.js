@@ -1,5 +1,3 @@
-const { resourceLimits } = require('worker_threads');
-
 function getFile(filePath, seperator = '\n') {
     let result = require('fs')
         .readFileSync(filePath)
@@ -11,134 +9,82 @@ function getFile(filePath, seperator = '\n') {
     }
     return result;
 }
+
 function solve(input, mute = false) {
-    let parsed = input.map(a=>{
-        let [_,player,start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i)
-        return {player:parseInt(player), start:parseInt(start), score:0,current:parseInt(start)}
-    })
-    let game = {rolled_dice:0,players:parsed};
+    let parsed = input.map((a) => {
+        let [_, player, start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i);
+        return { player: parseInt(player), start: parseInt(start), score: 0, current: parseInt(start) };
+    });
+    let game = { rolled_dice: 0, players: parsed };
     let result = playGame(game);
-    let players = result.players.sort((a,b)=>b.score-a.score)
+    let players = result.players.sort((a, b) => b.score - a.score);
     return players[1].score * result.rolled_dice;
 }
 
 function solve2(input, mute = false) {
-    let parsed = input.map(a=>{
-        let [_,player,start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i)
-        return {player:parseInt(player), start:parseInt(start), score:0,current:parseInt(start), universesWin: 0}
-    })
-    let game = {players:parsed};
-    let result = playMadnessGame(game);
-    console.log(result)
-    let players = result.players.sort((a,b)=>b.universesWin-a.universesWin)
-    return players[0].universesWin;
+    let parsed = input.map((a) => {
+        let [_, player, start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i);
+        return {
+            player: parseInt(player),
+            start: parseInt(start),
+        };
+    });
+    global.lookupTable = {}; // we need this for recursion lookup!
+    let result = universeGame(0, parsed[0].start, parsed[1].start, 0, 0);
+    return Math.max(result[0], result[1]);
 }
 
-function playGame(game, winCondition = (player)=>player.score>=1000){
+function playGame(game, winCondition = (player) => player.score >= 1000) {
     let dice_seed = 0;
-    outer: do{
-        for(let i = 0; i < game.players.length; i++){
+    outer: do {
+        for (let i = 0; i < game.players.length; i++) {
             let dices = [];
-            for(let _ = 0; _ < 3; _++){
+            for (let _ = 0; _ < 3; _++) {
                 game.rolled_dice++;
-                dices.push((dice_seed % 100)+1)
-                dice_seed = ((dice_seed+1) % 100)
+                dices.push((dice_seed % 100) + 1);
+                dice_seed = (dice_seed + 1) % 100;
             }
-            
-            let turns = dices.reduce((acc,cnt)=>acc+cnt,0)
-            game.players[i].current = ((game.players[i].current + turns-1) % 10) +1
-            game.players[i].score +=  game.players[i].current;
-            if(SomeOneHasWon(game.players, winCondition)){
+
+            let turns = dices.reduce((acc, cnt) => acc + cnt, 0);
+            game.players[i].current = ((game.players[i].current + turns - 1) % 10) + 1;
+            game.players[i].score += game.players[i].current;
+            if (SomeOneHasWon(game.players, winCondition)) {
                 break outer;
             }
         }
-    }while(true)
+    } while (true);
     return game;
 }
 
-function playMadnessGame_brute_force(game, limit = 21){
-    let universes = [[[game.players[0].score,game.players[0].current],[game.players[1].score,game.players[1].current]]];
-    outer: do{
-            let dices = [1,2,3].combine([1,2,3]).combine([1,2,3]).combine([1,2,3].combine([1,2,3]).combine([1,2,3]));
-            let temp = [];
-            for(let j = 0; j < dices.length; j++){
-                let turns1 = dices[j][0] + dices[j][1] + dices[j][2];
-                let turns2 = dices[j][3] + dices[j][4] + dices[j][5];
-                for( let k = 0; k < universes.length; k++){
-                    let [[s1,c1],[s2,c2]] = universes[k];
-                        c1 = ((c1+ turns1-1) % 10) +1
-                        c2 = ((c2+ turns2-1) % 10) +1
-                        s1 += c1;
-                        s2 += c2;
-                        if(s1>=limit){
-                            game.players[0].universesWin++;
-                        }else if(s2>=limit){
-                            game.players[1].universesWin++;
-                        }else{
-                            temp.push([[s1,c1],[s2,c2]])
-                        }
+function universeGame(player, point1, point2, currentScore = 0, identifier = 0) {
+    let StringIndexer = [player, point1, point2, currentScore, identifier].join();
+    let wins = [0, 0];
+    let result = global.lookupTable[StringIndexer];
+    if (!result) {
+        for (let i = 1; i <= 3; i++) {
+            for (let j = 1; j <= 3; j++) {
+                for (let k = 1; k <= 3; k++) {
+                    let indexes = i + j + k;
+                    let score = ((point1 + indexes - 1) % 10) + 1;
+                    let allScore = currentScore + score;
+                    if (allScore >= 21) {
+                        wins[player]++;
+                    } else {
+                        let next = universeGame(1 - player, point2, score, identifier, allScore);
+                        next.forEach((res, index) => (wins[index] += res));
                     }
-               
+                }
             }
-            if(temp.length==0){
-                break outer;
-            }
-            universes = temp.copy();
-            temp = [];
-         //   console.log(universes)
-    }while(true)
-    return game;
+        }
+        global.lookupTable[StringIndexer] = wins;
+        result = wins;
+    }
+    return result;
 }
 
-
-function playMadnessGame(game){
-    
-            let d = [1,2,3].combine([1,2,3]).combine([1,2,3]).map(a=>a.reduce((acc,cnt)=>acc+cnt,0));
-            let dices = [d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d].combine([d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d,d]);
-            console.log(dices)
-            let start;
-            for(let i = 0; i < dices.length; i++){
-                start = [[game.players[0].score,game.players[0].current],[game.players[1].score,game.players[1].current]];
-                let j = 0;
-                inner: do{
-                    let [s1,c1] = start[0]
-                    let [s2,c2] =  start[1]
-                        c1 = ((c1+ dices[i][j]-1) % 10) +1
-                        c2 = ((c2+ dices[i][j]-1) % 10) +1
-                        s1 += c1;
-                        s2 += c2;
-                        if(s1>=21){
-                            game.players[0].universesWin++;
-                            if(j < dices[i].length-1){
-                                j++;
-                                continue inner;
-                            }else{
-                                break inner;
-                            }
-                        }else if(s2>=21){
-                            game.players[1].universesWin++;
-                            if(j < dices[i].length-1){
-                                j++;
-                                continue inner;
-                            }else{
-                                break inner;
-                            }
-                        }else{
-                            start = [[s1,c1],[s2,c2]]
-                        }
-                       // console.log(`${j} von ${dices[i].length}`)
-                    }while(true)
-                    console.log(`${i} von ${dices.length}`)
-            }
-
-
-    return game;
-}
-
-
-function SomeOneHasWon(players, winCondition){
-    for(let i = 0; i < players.length; i++){
-        if(winCondition(players[i])){
+function SomeOneHasWon(players, winCondition) {
+    for (let i = 0; i < players.length; i++) {
+        if (winCondition(players[i])) {
             return true;
         }
     }
@@ -168,15 +114,6 @@ function testAll() {
             );
             process.exit(69);
         }
-    }
-}
-
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
     }
 }
 
@@ -259,18 +196,27 @@ function initPrototype() {
                 return [];
             }
             let result = [];
-            for(let i = 0; i < first.length; i++){
-                for(let j = 0; j < second.length; j++){
-                    let p = [first[i], second[j]]
-                    if(flat && (Array.isArray(first[i])||Array.isArray(second[j]))){
+            for (let i = 0; i < first.length; i++) {
+                for (let j = 0; j < second.length; j++) {
+                    let p = [first[i], second[j]];
+                    if (flat && (Array.isArray(first[i]) || Array.isArray(second[j]))) {
                         p = p.flat();
                     }
-                result.push(p);
-                }   
-            }   
+                    result.push(p);
+                }
+            }
             return result;
         },
     });
+}
+
+function slowWarning() {
+    process.on('SIGINT', () => {
+        process.exit(0);
+    });
+    if (process.send) {
+        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
+    }
 }
 
 async function main() {
@@ -291,8 +237,7 @@ async function main() {
     if (doTests) {
         testAll();
     }
-
-    // This solution is not that slow, but for 50 times resampling it takes about 2 seconds
+    // This solution is also not that slow, but for that amount of parallel universes it takes over 2 secs
     if (autoSkipSlow) {
         console.log('Auto Skipped Moderately Slow');
         process.exit(43);

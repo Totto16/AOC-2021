@@ -180,6 +180,15 @@ function testAll() {
     }
 }
 
+function slowWarning() {
+    process.on('SIGINT', () => {
+        process.exit(0);
+    });
+    if (process.send) {
+        process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
+    }
+}
+
 async function main() {
     let doTests = true;
     let autoSkipSlow = false;
@@ -204,6 +213,7 @@ async function main() {
         process.exit(43);
     }
 
+    slowWarning();
     let realInput = getFile('./input.txt');
     let Answer = solve(realInput);
     console.log(`Part 1: '${Answer}'`);
