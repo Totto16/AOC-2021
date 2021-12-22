@@ -11,90 +11,90 @@ function getFile(filePath, seperator = '\n') {
 }
 
 function solve(input, mute = false) {
-    let parsed = input.map((a) => {
-        let [_, player, start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i);
-        return { player: parseInt(player), start: parseInt(start), score: 0, current: parseInt(start) };
-    });
-    let game = { rolled_dice: 0, players: parsed };
-    let result = playGame(game);
-    let players = result.players.sort((a, b) => b.score - a.score);
-    return players[1].score * result.rolled_dice;
+    let parsed = input
+        .map((inp) => {
+            let [_, state, ...rest] = inp.match(
+                /(\w*)\sx=(-?\d*)\.\.(-?\d*),y=(-?\d*)\.\.(-?\d*),z=(-?\d*)\.\.(-?\d*)/i
+            );
+            let [p1, p2, p3, p4, p5, p6] = rest;
+            let coords = [
+                [p1, p2],
+                [p3, p4],
+                [p5, p6],
+            ];
+            coords = coords.map(([a, b]) => [parseInt(a), parseInt(b)]);
+            let error = false;
+            coords.forEach(([a, b]) => {
+                if ((a < -50 && b < -50) || (a > 50 && b > 50)) {
+                    error = true;
+                }
+            });
+            if (error) {
+                return null;
+            }
+
+            let [[x1, x2], [y1, y2], [z1, z2]] = coords;
+            return {
+                state: state == 'on',
+                x: [x1, '..', x2].fillElements(),
+                y: [y1, '..', y2].fillElements(),
+                z: [z1, '..', z2].fillElements(),
+            };
+        })
+        .filter((a) => a != null);
+
+    let UniquePoints = new Set();
+    for (let i = 0; i < parsed.length; i++) {
+        let current = parsed[i];
+        let cube = current.x.combine(current.y).combine(current.z);
+        if (current.state) {
+            cube.forEach((point) => UniquePoints.add(point.join(',')));
+        } else {
+            cube.forEach((point) => UniquePoints.delete(point.join(',')));
+        }
+        if (!mute) {
+            console.log(`${i + 1} / ${parsed.length}`);
+        }
+    }
+    return UniquePoints.size;
 }
 
 function solve2(input, mute = false) {
-    let parsed = input.map((a) => {
-        let [_, player, start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i);
-        return {
-            player: parseInt(player),
-            start: parseInt(start),
-        };
-    });
-    global.lookupTable = {}; // we need this for recursion lookup!
-    let result = universeGame(0, parsed[0].start, parsed[1].start, 0, 0);
-    return Math.max(result[0], result[1]);
-}
+    let parsed = input
+        .map((inp) => {
+            let [_, state, ...rest] = inp.match(
+                /(\w*)\sx=(-?\d*)\.\.(-?\d*),y=(-?\d*)\.\.(-?\d*),z=(-?\d*)\.\.(-?\d*)/i
+            );
+            let [x1, x2, y1, y2, z1, z2] = rest.map((a) => parseInt(a));
+            return {
+                state: state == 'on',
+                x: [x1, '..', x2].fillElements(),
+                y: [y1, '..', y2].fillElements(),
+                z: [z1, '..', z2].fillElements(),
+            };
+        })
+        .filter((a) => a != null);
 
-function playGame(game, winCondition = (player) => player.score >= 1000) {
-    let dice_seed = 0;
-    outer: do {
-        for (let i = 0; i < game.players.length; i++) {
-            let dices = [];
-            for (let _ = 0; _ < 3; _++) {
-                game.rolled_dice++;
-                dices.push((dice_seed % 100) + 1);
-                dice_seed = (dice_seed + 1) % 100;
-            }
-
-            let turns = dices.reduce((acc, cnt) => acc + cnt, 0);
-            game.players[i].current = ((game.players[i].current + turns - 1) % 10) + 1;
-            game.players[i].score += game.players[i].current;
-            if (SomeOneHasWon(game.players, winCondition)) {
-                break outer;
-            }
+    let UniquePoints = new Set();
+    for (let i = 0; i < parsed.length; i++) {
+        let current = parsed[i];
+        let cube = current.x.combine(current.y).combine(current.z);
+        if (current.state) {
+            cube.forEach((point) => UniquePoints.add(point.join(',')));
+        } else {
+            cube.forEach((point) => UniquePoints.delete(point.join(',')));
         }
-    } while (true);
-    return game;
-}
-
-function universeGame(player, point1, point2, currentScore = 0, identifier = 0) {
-    let StringIndexer = [player, point1, point2, currentScore, identifier].join();
-    let wins = [0, 0];
-    let result = global.lookupTable[StringIndexer];
-    if (!result) {
-        for (let i = 1; i <= 3; i++) {
-            for (let j = 1; j <= 3; j++) {
-                for (let k = 1; k <= 3; k++) {
-                    let indexes = i + j + k;
-                    let score = ((point1 + indexes - 1) % 10) + 1;
-                    let allScore = currentScore + score;
-                    if (allScore >= 21) {
-                        wins[player]++;
-                    } else {
-                        let next = universeGame(1 - player, point2, score, identifier, allScore);
-                        next.forEach((res, index) => (wins[index] += res));
-                    }
-                }
-            }
-        }
-        global.lookupTable[StringIndexer] = wins;
-        result = wins;
-    }
-    return result;
-}
-
-function SomeOneHasWon(players, winCondition) {
-    for (let i = 0; i < players.length; i++) {
-        if (winCondition(players[i])) {
-            return true;
+        if (!mute) {
+            console.log(`${i + 1} / ${parsed.length}`);
         }
     }
-    return false;
+    return UniquePoints.size;
 }
 
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
-    let t_result = [739785];
-    let t_result2 = [444356092776315];
+    let t_input = [getFile('./sample.txt'), getFile('./sample2.txt')];
+    let t_result = [39, 590784];
+    let t_result2 = [39, 2758514936282235];
 
     for (let i = 0; i < t_input.length; i++) {
         const testInput = t_input[i];
@@ -206,6 +206,33 @@ function initPrototype() {
                 }
             }
             return result;
+        },
+    });
+
+    Object.defineProperty(Array.prototype, 'fillElements', {
+        value: function (start = 0, end = 1000) {
+            let first = this;
+            if (!Array.isArray(first)) {
+                return [];
+            }
+            if (first.length > 3) {
+                return first;
+            }
+            let newArray = [];
+            for (let i = 0; i < first.length; i++) {
+                if (first[i] === '..') {
+                    let startNumber = i > 0 ? first[i - 1] : start;
+                    let endNumber = i < first.length - 1 ? first[i + 1] : end;
+                    let diff = endNumber >= startNumber ? 1 : -1;
+                    let compareFunction = endNumber >= startNumber ? (a, b) => a <= b : (a, b) => a >= b;
+                    for (let j = startNumber; compareFunction(j, endNumber); j += diff) {
+                        newArray.push(j);
+                    }
+                } else {
+                    // newArray.push(first[i]);
+                }
+            }
+            return newArray;
         },
     });
 }

@@ -127,7 +127,7 @@ function initPrototype() {
     Object.defineProperty(Array.prototype, 'equals', {
         value: function (second, amount = -1) {
             let first = this;
-            if (!first.isArray || !second.isArray) {
+            if (!Array.isArray(first) || !Array.isArray(second)) {
                 return false;
             }
             if (amount > 0) {
