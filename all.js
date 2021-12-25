@@ -217,6 +217,9 @@ async function runProcess(filePath, options) {
 
         programm.on('error', function (error) {
             output[2].push(error);
+            if (programm.connected) {
+                programm.disconnect();
+            }
             resolve({ code: 69, output, time: performance.now() - start });
         });
 
@@ -243,6 +246,9 @@ async function runProcess(filePath, options) {
                 process.stdin.setEncoding('utf8');
                 process.stdin.on('data', function (data) {
                     if (data.startsWith('c')) {
+                        if (programm.connected) {
+                            programm.disconnect();
+                        }
                         programm.kill('SIGINT');
                         output[2].push('Cancelled by User\n');
                         resolve({ code: 7, output, time: performance.now() - start });
@@ -252,6 +258,9 @@ async function runProcess(filePath, options) {
         });
 
         programm.on('close', function (code) {
+            if (programm.connected) {
+                programm.disconnect();
+            }
             resolve({ code, output, time: performance.now() - start });
         });
     });
