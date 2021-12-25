@@ -193,31 +193,39 @@ function printHelp(returnAvailable = false) {
 }
 
 function printOutChristmasTree() {
-    term.cyan('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
-    term.cyan(" .       .  .      .  . '  ...   ^w.   ^c.  ^r.  ^y..''''\n");
-    term.cyan('    .  .           . . .        ^w. ^c.  ^g.^c.^m.  ^y:      \n');
-    term.cyan(" ~     . .      '     .    .' ^y. ^w.' ^c.  ^y....'      \n");
-    term.cyan("~     . '...    ' .         ^m. ^y.^r.^w|\\^r.^y.''           \n");
-    term.cyan('   ..                      ^g. ^y:                   \n');
-    term.cyan("     .'         . '.     ^c.^y:'                     \n");
-    term.cyan(".    ~    '    ^b.^c'..        ^c.^y'''''.....  ...^r.     \n");
-    term.cyan("^b.^c~ .          .  .        ^y:'..^y. ^y..^r.  ^y.^y''^b.   ^r':   \n");
-    term.cyan("   ^b'^c .           .   . .  ^y:   ''  ''''..  ^b. ^b.^r'^y.  \n");
-    term.blue(".            .^c.      ^b.    ^y:             '..'.^r.^y:  \n");
-    term.blue("          .         .    ^y:       :'''..   ..'^r.^y:  \n");
-    term.blue("    .   . '          ^c. ^y.'    ..''^m.   ^m. ^y'''^y.^y...:  \n");
-    term.blue(" .     . '.         ^c. ^y: ...''^y. ^y..':   ^r.^y.^y..'      \n");
-    term.blue(". .    . .   .   ^m.  ^m. ^y:'^m.^y...'''    ^y'^r''           \n");
-    term.yellow("'.'.  ^b.    ^c'   ^r.^y:'. ....'                        \n");
-    term.yellow("   :         ^m.^b' ^y:  '                             \n");
-    term.yellow("   :        ^b. ^y..'                                \n");
-    term.yellow("   '. ^b.    ^r.^b~ ^y:                                  \n");
-    term.yellow("   '.     ^b.^r. ^y:                                   \n");
-    term.yellow('    :  ^c.^b.^r. ^y:                                     \n');
-    term.yellow("      '. ^b.^y.  ^y:             ^wA^yO^gC ^c2^b0^m2^r1              \n");
-    term.yellow("       : ^b~.^y.^y.'                ^gb^cy                 \n");
-    term.yellow("       : ^m. ^y.'                ^yT^go^ct^bt^mo               \n");
-    term.yellow('       :..:                                      \n');
+    function* gen(){
+        let available = "bcmyrgw".split('');
+        do{
+            let i = Math.floor(Math.random()*available.length)
+            yield `^${available[i]}`;
+        }while(true)
+    }
+    let color = gen();
+    term.cyan(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`);
+    term.cyan(` .       .  .      .  . '  ...   ^w.   ^c.  ${color.next().value}.  ^y..''''\n`);
+    term.cyan(`    .  .           . . .        ^w. ^c.  ${color.next().value}.^c.${color.next().value}.  ^y:      \n`);
+    term.cyan(` ~     . .      '     .    .' ${color.next().value}. ^w.' ${color.next().value}.  ^y....'      \n`);
+    term.cyan(`~     . '...    ' .         ${color.next().value}. ^y.^r.^w|\\^r.^y.''           \n`);
+    term.cyan(`   ..                      ${color.next().value}. ^y:                   \n`);
+    term.cyan(`     .'         . '.     ${color.next().value}.^y:'                     \n`);
+    term.cyan(`.    ~    '    ^b.^c'..        ${color.next().value}.^y'''''.....  ...^r.     \n`);
+    term.cyan(`^b.^c~ .          .  .        ^y:'..${color.next().value}. ^y..${color.next().value}.  ${color.next().value}.^y''${color.next().value}.   ^r':   \n`);
+    term.cyan(`   ^b'^c .           .   . .  ^y:   ''  ''''..  ${color.next().value}. ${color.next().value}.^r'^y.  \n`);
+    term.blue(`.            .^c.      ^b.    ^y:             '..'.${color.next().value}.^y:  \n`);
+    term.blue(`          .         .    ^y:       :'''..   ..'${color.next().value}.^y:  \n`);
+    term.blue(`    .   . '          ^c. ^y.'    ..''${color.next().value}.   ${color.next().value}. ^y'''${color.next().value}.^y...:  \n`);
+    term.blue(` .     . '.         ^c. ^y: ...''${color.next().value}. ^y..':   ^r..^y..'      \n`);
+    term.blue(`. .    . .   .   ${color.next().value}.  ${color.next().value}. ^y:'${color.next().value}.^y...'''    ^y'^r''           \n`);
+    term.yellow(`'.'.  ^b.    ^c'   ${color.next().value}.^y:'. ....'                        \n`);
+    term.yellow(`   :         ${color.next().value}.^b' ^y:  '                             \n`);
+    term.yellow(`   :        ${color.next().value}. ^y..'                                \n`);
+    term.yellow(`   '. ^b.    ${color.next().value}.^b. ^y:                                  \n`);
+    term.yellow(`    '.     ^b.${color.next().value}. ^y:                                   \n`);
+    term.yellow(`     :  ^c.^b.${color.next().value}. ^y:                                     \n`);
+    term.yellow(`     '. ^b.${color.next().value}.  ^y:             ^wA^yO^gC ^c2^b0^m2^r1              \n`);
+    term.yellow(`      : ^b~.${color.next().value}.^y.'                ^gb^cy                 \n`);
+    term.yellow(`      : ${color.next().value}. ^y.'                ^yT^go^ct^bt^mo               \n`);
+    term.yellow(`      :..:                                      \n`);
     process.exit(0);
 }
 
