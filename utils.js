@@ -160,7 +160,7 @@ function initPrototypes() {
 }
 
 function slowWarning(type) {
-    process.on('SIGPIPE', () => {
+    process.on('SIGINT', () => {
         if (process.connected) {
             process.disconnect();
         }

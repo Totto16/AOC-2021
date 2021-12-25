@@ -157,13 +157,13 @@ function printHelp(returnAvailable = false) {
             type: 'internal',
             args: ['--mute', '-m'],
             representation: 'mute',
-            description: 'Completely mutes everything (Status code will indicate only the status) (not working atm :()',
+            description: 'Completely mutes everything (Status code will indicate only the status))',
         },
         {
             type: 'internal',
             args: ['--verbose', '-v', '--debug', '-d'],
             representation: 'debug',
-            description: 'Print additional Information, at the moment only additional timing is available.',
+            description: 'Print additional Information, at the moment only additional timing and argv logging is available. for additional debugging set debug in \'utils.js\' to \'true\'',
         },
         {
             type: 'which',
@@ -382,7 +382,7 @@ async function runProcess(filePath, options) {
                     process.stdin.setEncoding('utf8');
                     process.stdin.on('data', function (data) {
                         if (data.startsWith('c')) {
-                            programm.kill('SIGPIPE'); // unused signal, to indicate the right thing!
+                            programm.kill('SIGINT'); // used signal(but not triggerable by Ctrl+C), to indicate the right thing!
                             process.stdin.pause();
                             output[2].push('Cancelled by User\n');
                             if (programm.connected) {
