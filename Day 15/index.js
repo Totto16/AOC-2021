@@ -1,17 +1,3 @@
-const { check } = require('prettier');
-
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input, mute = false) {
     let parsed = input.map((a) => a.split('').map((b) => parseInt(b)));
     let destination = [parsed[0].length - 1, parsed.length - 1];
@@ -122,40 +108,8 @@ function findAdjacent(x, y, parsed) {
     return adjacent;
 }
 
-function initPrototype() {
-    //some useful Functions, copy from Day 09
-    Object.defineProperty(Array.prototype, 'equals', {
-        value: function (second, amount = -1) {
-            let first = this;
-            if (!Array.isArray(first) || !Array.isArray(second)) {
-                return false;
-            }
-            if (amount > 0) {
-                let length = first.length === second.length ? first.length : Math.min(first.length, second.length);
-                if (length < amount) {
-                    return false;
-                }
-                for (let i = 0; i < amount; i++) {
-                    if (first[i] != second[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return first.length === second.length && first.every((a, index) => a === second[index]);
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'includesArray', {
-        value: function (singleArray) {
-            let BigArray = this;
-            return BigArray.reduce((acc, cnt) => cnt.equals(singleArray) | acc, false);
-        },
-    });
-}
-
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
+    let t_input = [getFile('./sample.txt', __filename)];
 
     let t_result = [40];
     let t_result2 = [315];
@@ -180,45 +134,7 @@ function testAll() {
     }
 }
 
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
-    }
-}
+let { start, getFile } = require('../utils.js');
+// I tried to make it faster, but its super slow :( it is large pathfinding, so it is what it is and it isn't what it isn't ~ (twitch.tv/)tsoding
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-    initPrototype();
-    if (doTests) {
-        testAll();
-    }
-
-    // I tried to make it faster, but its super slow :( ist large pathfinding, so it how it is
-    if (autoSkipSlow) {
-        console.log('Auto Skipped Slow');
-        process.exit(43);
-    }
-
-    slowWarning();
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: true, slowness: 1 });

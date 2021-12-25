@@ -8,7 +8,8 @@
     "prettier": "npx prettier --write .",
     "all":"node . --all -s -t",
     "start":"node .",
-    "help":"node . --help"
+    "help":"node . --help",
+    "pretty":"node . -m -s --0"
   },
   "repository": {
     "type": "git",

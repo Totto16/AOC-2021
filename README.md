@@ -4,15 +4,19 @@ Welcome to my Advent of Code 2021 repository! The solutions are written in JavaS
 
 ## Running the solutions
 For running the code you need [Node.js](https://nodejs.org/en/) installed.
-To run it run 
+To run it run you first have to install all the needed packages:
+
+ ```
+ npm install
+ ```
+
+You can run it then with 
 
  ```
  npm run all
- ```
 
-or to select only one specific Day run 
+ or
 
- ```
  npm run start
  ```
 
@@ -20,6 +24,13 @@ For help run
  ```
 npm run help
  ```
+
+For more options run it with: 
+``` 
+node . [options]
+```
+
+to see them all you can run the help command.
 
 
 <!--- advent_readme_stars table --->

@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input, mute = false) {
     let parsed = input.map((a) => (a.includes('->') ? a.split('->').map((b) => b.trim()) : a));
     let template = parsed[0];
@@ -84,7 +72,7 @@ function solve2(input, mute = false) {
         return obj;
     }, {});
 
-    let temp = template.split(''); // teh begin + ending have to be increased by 1 to make the them even!!
+    let temp = template.split(''); // the begin + ending have to be increased by 1 to make the them even!!
     result[temp[0]]++;
     result[temp[temp.length - 1]]++;
     result = Object.values(result)
@@ -95,7 +83,7 @@ function solve2(input, mute = false) {
 }
 
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
+    let t_input = [getFile('./sample.txt', __filename)];
 
     let t_result = [1588];
     let t_result2 = [2188189693529];
@@ -120,29 +108,6 @@ function testAll() {
     }
 }
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
+let { start, getFile } = require('../utils.js');
 
-    if (doTests) {
-        testAll();
-    }
-
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: false });

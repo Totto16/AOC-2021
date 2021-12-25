@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input, mute = false) {
     let parsed = [];
     let toParse = input.map((a) => a.split(''));
@@ -185,7 +173,7 @@ let recSimul = function (room, hall, currentValue, RoomLength) {
 };
 
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
+    let t_input = [getFile('./sample.txt', __filename)];
     let t_result = [12521];
     let t_result2 = [44169];
 
@@ -211,44 +199,8 @@ function testAll() {
     }
 }
 
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
-    }
-}
+let { start, getFile } = require('../utils.js');
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
+// This solution is slow since it's also a bruteforce, it takes some time to test all possible low solutions, there are many shorthand evaluations, it breaks (or continues) in certain cases!
 
-    if (doTests) {
-        testAll();
-    }
-    // This solution is slow since it's also a bruteforce, it takes some time to test all possible low solutions, there are many shorthand evaluations, it breaks (or continues) in certain cases!
-    if (autoSkipSlow) {
-        console.log('Auto Skipped Moderately Slow');
-        process.exit(43);
-    }
-
-    slowWarning();
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: false, slowness: 0 });

@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input) {
     let flashes = 0;
     let parsed = input.map((a) => a.split('').map((b) => parseInt(b)));
@@ -125,30 +113,8 @@ function flash(parsed, j, k) {
     return parsed;
 }
 
-function initPrototype() {
-    //some useful Functions, copy from Day 09
-    Object.defineProperty(Array.prototype, 'equals', {
-        value: function (first) {
-            let second = this;
-            return (
-                Array.isArray(first) &&
-                Array.isArray(second) &&
-                first.length === second.length &&
-                first.every((a, index) => a === second[index])
-            );
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'includesArray', {
-        value: function (singleArray) {
-            let BigArray = this;
-            return BigArray.reduce((acc, cnt) => cnt.equals(singleArray) | acc, false);
-        },
-    });
-}
-
 function TestBoth() {
-    let testInput = getFile('./sample.txt');
+    let testInput = getFile('./sample.txt', __filename);
 
     let testResult = 1656;
     let testResult2 = 195;
@@ -165,29 +131,6 @@ function TestBoth() {
     }
 }
 
-async function main() {
-    initPrototype();
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-    if (doTests) {
-        TestBoth();
-    }
+let { start, getFile } = require('../utils.js');
 
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: TestBoth, solve, solve2 }, { needsPrototypes: true });

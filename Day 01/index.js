@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input) {
     let result = 0;
     let previous = -1;
@@ -50,7 +38,7 @@ function solve2(input) {
 }
 
 function TestBoth() {
-    let testInput = getFile('./sample.txt');
+    let testInput = getFile('./sample.txt', __filename);
 
     let testResult = 7;
     let testResult2 = 5;
@@ -68,29 +56,6 @@ function TestBoth() {
     }
 }
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-    if (doTests) {
-        TestBoth();
-    }
+let { start, getFile } = require('../utils.js');
 
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: TestBoth, solve, solve2 });

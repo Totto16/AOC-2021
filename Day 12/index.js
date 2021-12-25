@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input) {
     let Nodes = {};
     for (let i = 0; i < input.length; i++) {
@@ -89,7 +77,11 @@ function isUpperCase(text) {
 }
 
 function testAll() {
-    let t_input = [getFile('./sample.txt'), getFile('./sample1.txt'), getFile('./sample2.txt')];
+    let t_input = [
+        getFile('./sample.txt', __filename),
+        getFile('./sample1.txt', __filename),
+        getFile('./sample2.txt', __filename),
+    ];
 
     let t_result = [10, 19, 226];
     let t_result2 = [36, 103, 3509];
@@ -114,28 +106,6 @@ function testAll() {
     }
 }
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-    if (doTests) {
-        testAll();
-    }
+let { start, getFile } = require('../utils.js');
 
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: false });

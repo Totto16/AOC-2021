@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input, mute = false) {
     let parsed = input.map((a) => {
         let [_, player, start] = a.match(/Player\s(\d*)\sstarting\sposition:\s(\d*)/i);
@@ -92,7 +80,7 @@ function SomeOneHasWon(players, winCondition) {
 }
 
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
+    let t_input = [getFile('./sample.txt', __filename)];
     let t_result = [739785];
     let t_result2 = [444356092776315];
 
@@ -117,138 +105,7 @@ function testAll() {
     }
 }
 
-function initPrototype() {
-    //some useful Functions, copy from Day 09
-    Object.defineProperty(Array.prototype, 'equals', {
-        value: function (second, amount = -1) {
-            let first = this;
-            if (!Array.isArray(first) || !Array.isArray(second)) {
-                return false;
-            }
-            if (amount > 0) {
-                let length = first.length === second.length ? first.length : Math.min(first.length, second.length);
-                if (length < amount) {
-                    return false;
-                }
-                for (let i = 0; i < amount; i++) {
-                    if (first[i] != second[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return first.length === second.length && first.every((a, index) => a === second[index]);
-        },
-    });
+let { start, getFile } = require('../utils.js');
+// This solution is also not that slow, but for that amount of parallel universes it takes over 2 secs
 
-    Object.defineProperty(Array.prototype, 'includesArray', {
-        value: function (singleArray) {
-            let BigArray = this;
-            return BigArray.reduce((acc, cnt) => cnt.equals(singleArray) | acc, false);
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'printNested', {
-        value: function (mapFunction = (a) => (a == 0 ? '.' : a.toString()), seperator = ' ', EOL = '\n') {
-            let array = this;
-            let error = false;
-            let toLog = array
-                .map((a) => {
-                    if (!Array.isArray(a)) {
-                        error = true;
-                    }
-                    return a.map((b) => mapFunction(b)).join(seperator);
-                })
-                .join(EOL);
-            if (error) {
-                return false;
-            }
-            console.log(toLog);
-            return true;
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'copy', {
-        value: function () {
-            return JSON.parse(JSON.stringify(this));
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'count', {
-        value: function (countFunction = (a) => a, start = 0) {
-            let array = this;
-            let reduceFunction = (acc, el) => {
-                if (!Array.isArray(el)) {
-                    return acc + countFunction(el);
-                }
-                return acc + el.reduce(reduceFunction, start);
-            };
-
-            let result = array.reduce(reduceFunction, start);
-            return result;
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'combine', {
-        value: function (second, flat = true) {
-            let first = this;
-            if (!Array.isArray(first) || !Array.isArray(second)) {
-                return [];
-            }
-            let result = [];
-            for (let i = 0; i < first.length; i++) {
-                for (let j = 0; j < second.length; j++) {
-                    let p = [first[i], second[j]];
-                    if (flat && (Array.isArray(first[i]) || Array.isArray(second[j]))) {
-                        p = p.flat();
-                    }
-                    result.push(p);
-                }
-            }
-            return result;
-        },
-    });
-}
-
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
-    }
-}
-
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-
-    initPrototype();
-    if (doTests) {
-        testAll();
-    }
-    // This solution is also not that slow, but for that amount of parallel universes it takes over 2 secs
-    if (autoSkipSlow) {
-        console.log('Auto Skipped Moderately Slow');
-        process.exit(43);
-    }
-
-    slowWarning();
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: true, slowness: 0 });

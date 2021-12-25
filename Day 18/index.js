@@ -1,14 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
 function solve(input, mute = false) {
     let list = input.map((a) => eval(a));
     let sum = list[0];
@@ -123,7 +112,7 @@ function magnitude(snailfish) {
     return parseInt(res);
 }
 function testAll() {
-    let t_input = [getFile('./sample.txt')];
+    let t_input = [getFile('./sample.txt', __filename)];
     let t_result = [4140];
     let t_result2 = [3993];
 
@@ -148,89 +137,7 @@ function testAll() {
     }
 }
 
-function initPrototype() {
-    //some useful Functions, copy from Day 09
-    Object.defineProperty(Array.prototype, 'equals', {
-        value: function (second, amount = -1) {
-            let first = this;
-            if (!first.isArray || !second.isArray) {
-                return false;
-            }
-            if (amount > 0) {
-                let length = first.length === second.length ? first.length : Math.min(first.length, second.length);
-                if (length < amount) {
-                    return false;
-                }
-                for (let i = 0; i < amount; i++) {
-                    if (first[i] != second[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return first.length === second.length && first.every((a, index) => a === second[index]);
-        },
-    });
+let { start, getFile } = require('../utils.js');
+// To Bruteforce is the best options, so it takes about 1-2 secs, more than 1 sec is moderately slow, more then 10 slow!
 
-    Object.defineProperty(Array.prototype, 'includesArray', {
-        value: function (singleArray) {
-            let BigArray = this;
-            return BigArray.reduce((acc, cnt) => cnt.equals(singleArray) | acc, false);
-        },
-    });
-
-    Object.defineProperty(Array.prototype, 'isArray', {
-        value: function () {
-            return true;
-        },
-    });
-
-    /*  Object.defineProperty(Number.prototype, 'isArray', {
-        value: function () {
-            return false;
-        },
-    }); */ // Literals don't have this prototype
-}
-
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'Attention: Moderately Slow' }));
-    }
-}
-
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-
-    initPrototype();
-    if (doTests) {
-        testAll();
-    }
-
-    // To Bruteforce is the best options, so it takes about 1-2 secs, more than 1 sec is moderately slow, more then 10 slow!
-    if (autoSkipSlow) {
-        console.log('Auto Skipped Moderately Slow');
-        process.exit(43);
-    }
-    slowWarning();
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: testAll, solve, solve2 }, { needsPrototypes: true, slowness: 0 });

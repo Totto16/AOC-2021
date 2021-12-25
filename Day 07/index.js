@@ -1,15 +1,3 @@
-function getFile(filePath, seperator = '\n') {
-    let result = require('fs')
-        .readFileSync(filePath)
-        .toString()
-        .split(seperator)
-        .filter((a) => a != '');
-    if (result.some((a) => a.split('').includes('\r'))) {
-        result = result.map((a) => a.replaceAll(/\r/g, ''));
-    }
-    return result;
-}
-
 function solve(input) {
     let crabs = input[0].split(',').map((a) => parseInt(a));
     let options = [];
@@ -53,7 +41,7 @@ function add_fact(number) {
 }
 
 function TestBoth() {
-    let testInput = getFile('./sample.txt');
+    let testInput = getFile('./sample.txt', __filename);
 
     let testResult = 37;
     let testResult2 = 168;
@@ -71,43 +59,7 @@ function TestBoth() {
     }
 }
 
-function slowWarning() {
-    process.on('SIGINT', () => {
-        process.exit(0);
-    });
-    if (process.send) {
-        process.send(JSON.stringify({ type: 'error', message: 'ATTENTION: SLOW' }));
-    }
-}
+let { start, getFile } = require('../utils.js');
+// I could definitely improve the algorithm to make it faster, like I did in many after that, but just for fun I'll let this use the slow Functionality!
 
-async function main() {
-    let doTests = true;
-    let autoSkipSlow = false;
-    process.argv.forEach((string) => {
-        if (string.startsWith('--')) {
-            let arg = string.replace('--', '').toLowerCase();
-            if (arg === 'no-tests') {
-                doTests = false;
-            } else if (arg === 'autoskipslow') {
-                autoSkipSlow = true;
-            }
-        }
-    });
-    if (doTests) {
-        TestBoth();
-    }
-
-    // I could definitely improve the algorithm to make it faster, like I did in many after that, but just for fun I'll let this use the slow Functionality!
-    if (autoSkipSlow) {
-        console.log('Auto Skipped Slow');
-        process.exit(43);
-    }
-    slowWarning();
-    let realInput = getFile('./input.txt');
-    let Answer = solve(realInput);
-    console.log(`Part 1: '${Answer}'`);
-    let Answer2 = solve2(realInput);
-    console.log(`Part 2: '${Answer2}'`);
-}
-
-main();
+start(__filename, { tests: TestBoth, solve, solve2 }, { slowness: 0 });
