@@ -6,3 +6,6 @@ package-lock.json
 .vscode
 node_modules
 .github
+.eslintignore
+.eslintrc.js
+.eslintcache

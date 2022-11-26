@@ -1,15 +1,19 @@
 {
-  "name": "aoc-2021.js",
-  "version": "1.0.0",
-  "description": "The Advent of Code solved entirely in Node.JS",
-  "main": "all.js",
+  "name": "aoc-2021.ts",
+  "version": "2.0.0",
+  "description": "The Advent of Code solved entirely in Node.JS (Typescript)",
+  "main": "./build/all.js",
   "scripts": {
-    "test":"npm run prettier && node . --all -s",
+    "test": "npm run prettier && node . --all -s",
     "prettier": "npx prettier --write .",
-    "all":"node . --all -s -t",
-    "start":"node .",
-    "help":"node . --help",
-    "pretty":"node . -m -s --0"
+    "all": "node . --all -s -t",
+    "start": "node .",
+    "help": "node . --help",
+    "pretty": "node . -m -s --0",
+    "compile": "tsc",
+    "lint:quiet": "eslint --fix 'src/**/*.ts' --cache --quiet --color",
+    "lint": "eslint --fix 'src/**/*.ts' --cache --color",
+    "lint:debug": "eslint --fix 'src/**/*.ts' --debug --color"
   },
   "repository": {
     "type": "git",
@@ -17,7 +21,8 @@
   },
   "keywords": [
     "AOC",
-    "js"
+    "js",
+    "ts"
   ],
   "author": "Totto",
   "license": "ISC",
@@ -25,8 +30,22 @@
     "url": "https://github.com/Totto16/AOC-2021/issues"
   },
   "homepage": "https://github.com/Totto16/AOC-2021#readme",
-  "dependencies": {
-    "prettier": "^2.5.0",
-    "terminal-kit": "^2.2.3"
+  "engines": {
+    "node": ">=16.0.0",
+    "npm":">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@types/terminal-kit": "^2.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "eslint": "^8.27.0",
+    "eslint-plugin-boundaries": "^3.0.0",
+    "eslint-plugin-github": "^4.4.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-optimize-regex": "^1.2.1",
+    "eslint-plugin-regexp": "^1.10.0",
+    "eslint-plugin-security": "^1.5.0",
+    "eslint-plugin-this": "^0.2.3"
   }
 }
